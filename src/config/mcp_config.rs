@@ -20,6 +20,8 @@ pub struct McpConfig {
     pub status: McpServerStatus,
     /// Capabilities
     pub capabilities: Vec<String>,
+    /// Auto start on launch
+    pub auto_start: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -28,6 +30,7 @@ pub enum McpServerStatus {
     Stopped,
     Error,
     Unknown,
+    Starting,
 }
 
 impl std::fmt::Display for McpServerStatus {
@@ -37,6 +40,7 @@ impl std::fmt::Display for McpServerStatus {
             McpServerStatus::Stopped => write!(f, "stopped"),
             McpServerStatus::Error => write!(f, "error"),
             McpServerStatus::Unknown => write!(f, "unknown"),
+            McpServerStatus::Starting => write!(f, "starting"),
         }
     }
 }
@@ -51,6 +55,7 @@ impl Default for McpConfig {
             cwd: None,
             status: McpServerStatus::Unknown,
             capabilities: Vec::new(),
+            auto_start: true,
         }
     }
 }
@@ -66,6 +71,7 @@ impl McpConfig {
             cwd: None,
             status: McpServerStatus::Unknown,
             capabilities: Vec::new(),
+            auto_start: true,
         }
     }
 

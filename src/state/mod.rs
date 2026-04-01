@@ -158,6 +158,12 @@ impl AppState {
     }
 }
 
+impl Default for AppState {
+    fn default() -> Self {
+        Self::new(Settings::default())
+    }
+}
+
 impl Conversation {
     /// Create a new conversation
     pub fn new() -> Self {

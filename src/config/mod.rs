@@ -133,6 +133,11 @@ impl Settings {
         match key {
             "model" => settings.model = value.to_string(),
             "verbose" => settings.verbose = value.parse().unwrap_or(false),
+            "api_key" => settings.api.api_key = Some(value.to_string()),
+            "base_url" => settings.api.base_url = value.to_string(),
+            "max_tokens" => settings.api.max_tokens = value.parse().unwrap_or(4096),
+            "timeout" => settings.api.timeout = value.parse().unwrap_or(120),
+            "streaming" => settings.api.streaming = value.parse().unwrap_or(true),
             "memory.enabled" => settings.memory.enabled = value.parse().unwrap_or(true),
             "voice.enabled" => settings.voice.enabled = value.parse().unwrap_or(false),
             _ => return Err(anyhow::anyhow!("Unknown setting: {}", key)),

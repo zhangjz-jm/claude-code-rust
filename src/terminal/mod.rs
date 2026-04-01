@@ -61,8 +61,8 @@ impl TerminalApp {
                 .split(f.size());
             
             // Header
-            let header = Paragraph::new("Claude Code Rust")
-                .style(Style::default().fg(Color::Cyan))
+            let header = Paragraph::new("🟢 Claude Code Rust - 重构高性能版本")
+                .style(Style::default().fg(Color::Green))
                 .alignment(Alignment::Center)
                 .block(Block::default().borders(Borders::ALL));
             f.render_widget(header, chunks[0]);

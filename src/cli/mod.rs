@@ -16,6 +16,8 @@ use std::path::PathBuf;
 #[command(author = "Anthropic")]
 #[command(version = "0.1.0")]
 #[command(about = "High-performance Rust implementation of Claude Code CLI")]
+#[command(disable_version_flag = true)]
+#[command(disable_help_subcommand = true)]
 pub struct CliArgs {
     /// Path to the project directory
     #[arg(short, long, value_name = "PATH")]
@@ -109,6 +111,44 @@ pub enum Commands {
         #[arg(short, long)]
         topic: Option<String>,
     },
+
+    /// Manage background services
+    Services {
+        #[command(subcommand)]
+        action: ServiceCommands,
+    },
+
+    /// Run an agent
+    Agent {
+        /// Agent type (guide, explore, plan, verify, general)
+        #[arg(short, long)]
+        agent_type: String,
+        /// Prompt for the agent
+        #[arg(short, long)]
+        prompt: String,
+    },
+
+    /// Manage Magic Docs
+    MagicDocs {
+        #[command(subcommand)]
+        action: MagicDocsCommands,
+    },
+
+    /// Team memory sync
+    TeamSync {
+        #[command(subcommand)]
+        action: TeamSyncCommands,
+    },
+
+    /// Run stress tests
+    StressTest {
+        /// Number of concurrent operations
+        #[arg(short, long, default_value = "10")]
+        concurrency: usize,
+        /// Number of iterations per service
+        #[arg(short, long, default_value = "1000")]
+        iterations: usize,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -173,6 +213,24 @@ pub enum PluginCommands {
 
     /// Update all plugins
     Update,
+
+    /// Search for plugins
+    Search {
+        /// Search query
+        query: String,
+    },
+
+    /// Enable a plugin
+    Enable {
+        /// Plugin name
+        name: String,
+    },
+
+    /// Disable a plugin
+    Disable {
+        /// Plugin name
+        name: String,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -198,4 +256,97 @@ pub enum MemoryCommands {
 
     /// Run memory consolidation (dream)
     Dream,
+
+    /// Force AutoDream consolidation
+    AutoDream,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum ServiceCommands {
+    /// Show status of all services
+    Status,
+
+    /// Start all services
+    Start,
+
+    /// Stop all services
+    Stop,
+
+    /// Check AutoDream status
+    AutoDream,
+
+    /// Check Voice status
+    Voice,
+
+    /// Check Magic Docs status
+    MagicDocs,
+
+    /// Check Team Sync status
+    TeamSync,
+
+    /// Check Plugins status
+    Plugins,
+
+    /// Check Agents status
+    Agents,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum MagicDocsCommands {
+    /// List tracked Magic Docs
+    List,
+
+    /// Check a file for Magic Doc header
+    Check {
+        /// File path to check
+        file: String,
+    },
+
+    /// Update a Magic Doc
+    Update {
+        /// File path to update
+        file: String,
+        /// Context for update
+        #[arg(short, long)]
+        context: Option<String>,
+    },
+
+    /// Clear all tracked Magic Docs
+    Clear,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum TeamSyncCommands {
+    /// Show sync status
+    Status,
+
+    /// Authenticate with team
+    Auth {
+        /// Team ID
+        team_id: String,
+    },
+
+    /// Sync memories
+    Sync,
+
+    /// List team memories
+    List,
+
+    /// Create a team memory
+    Create {
+        /// Memory title
+        title: String,
+        /// Memory content
+        #[arg(short, long)]
+        content: String,
+        /// Tags (comma-separated)
+        #[arg(short, long)]
+        tags: Option<String>,
+    },
+
+    /// Delete a team memory
+    Delete {
+        /// Memory ID
+        id: String,
+    },
 }

@@ -7,6 +7,9 @@
 //! - Voice input support
 //! - Memory management and team sync
 //! - Plugin system
+//! - SSH connection support
+//! - Remote execution
+//! - Project initialization
 
 pub mod cli;
 pub mod tools;
@@ -21,13 +24,15 @@ pub mod utils;
 pub mod services;
 pub mod session;
 pub mod terminal;
+pub mod advanced;
 
 pub use cli::Cli;
 pub use state::AppState;
 pub use tools::ToolRegistry;
-pub use api::AnthropicClient;
+pub use api::{ApiClient, AnthropicClient, ChatMessage};
 pub use config::Settings;
 pub use mcp::McpManager;
 pub use voice::VoiceInput;
 pub use memory::MemoryManager;
 pub use plugins::PluginManager;
+pub use advanced::{SshClient, RemoteExecutor, ProjectInitializer};
