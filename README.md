@@ -17,6 +17,22 @@
 
 </div>
 
+## 🌐 项目网站
+
+| 网站 | 描述 |
+|:-----|:-----|
+| [Claude Code Rust](https://claudecode-rust.netlify.app/) | 官方项目网站 - 性能展示和安装指南 |
+| [Claude Code Rust Landing](https://lorryjovens-hub.github.io/claude-code-rust-landing/) | 项目介绍和特性展示 |
+
+<div align="center">
+  <a href="https://claudecode-rust.netlify.app/" target="_blank">
+    <img src="https://claudecode-rust.netlify.app/og-image.png" alt="Claude Code Rust 网站" width="400" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+  </a>
+  <a href="https://lorryjovens-hub.github.io/claude-code-rust-landing/" target="_blank">
+    <img src="https://lorryjovens-hub.github.io/claude-code-rust-landing/og-image.png" alt="Claude Code Rust Landing" width="400" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-left: 20px;" />
+  </a>
+</div>
+
 ---
 
 ## 🎯 项目概述
