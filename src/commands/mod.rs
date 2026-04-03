@@ -22,6 +22,7 @@ pub mod voice;
 pub mod mcp;
 pub mod plugins;
 pub mod analytics;
+pub mod buddy;
 
 // 重新导出主要类型
 pub use types::{Command, CommandContext, CommandResult, CommandBase};
@@ -40,6 +41,7 @@ pub use cli::{
 };
 
 use crate::error::Result;
+use crate::state::AppState;
 
 /// 初始化命令系统
 pub async fn init() -> Result<CommandManager> {
@@ -47,6 +49,25 @@ pub async fn init() -> Result<CommandManager> {
     
     // 注册核心命令加载器
     manager.add_loader(BuiltinCommandLoader);
+    
+    // 加载所有命令
+    manager.load_all().await?;
+    
+    tracing::info!("Command system initialized with {} commands", 
+        manager.registry().len().await);
+    
+    Ok(manager)
+}
+
+/// 初始化命令系统（带应用状态）
+pub async fn init_with_state(app_state: AppState) -> Result<CommandManager> {
+    let mut manager = CommandManager::new();
+    
+    // 注册核心命令加载器
+    manager.add_loader(BuiltinCommandLoader);
+    
+    // 注册 Buddy 命令加载器
+    manager.add_loader(BuddyCommandLoader { app_state });
     
     // 加载所有命令
     manager.load_all().await?;
@@ -79,6 +100,28 @@ impl CommandLoader for BuiltinCommandLoader {
     
     fn name(&self) -> &str {
         "builtin"
+    }
+}
+
+/// Buddy 命令加载器
+struct BuddyCommandLoader {
+    app_state: AppState,
+}
+
+#[async_trait::async_trait]
+impl CommandLoader for BuddyCommandLoader {
+    async fn load(&self, registry: &CommandRegistry) -> Result<()> {
+        // 注册 Buddy 命令
+        let buddy_executor = buddy::BuddyCommandExecutor::new(self.app_state.clone());
+        registry.register(buddy_executor).await;
+        
+        tracing::debug!("Loaded Buddy command");
+        
+        Ok(())
+    }
+    
+    fn name(&self) -> &str {
+        "buddy"
     }
 }
 
