@@ -1,5 +1,5 @@
 # Claude Code Rust
-
+ 该项目包含 typescript源码
 🚀 Anthropic Claude Code 的 Rust 全量重构版本 - 性能提升 2.5x，体积减少 97%，零依赖原生安全
 
 ## 项目概述
