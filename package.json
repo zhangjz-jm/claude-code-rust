@@ -1,6 +1,6 @@
 {
   "name": "claude-code-rust",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Claude Code Rust implementation - AI-powered coding assistant",
   "license": "MIT",
   "author": "Claude Code Team",

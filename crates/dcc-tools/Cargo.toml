@@ -1,0 +1,37 @@
+[package]
+name = "dcc-tools"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Digital Content Creation (DCC) tools integration for Claude Code - Blender, UE5, etc."
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+reqwest = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+
+# DCC-specific dependencies
+pyo3 = { version = "0.21", features = ["auto-initialize"], optional = true }
+pythonize = { version = "0.21", optional = true }
+tokio-tungstenite = { workspace = true }
+
+[features]
+default = ["blender", "ue5"]
+blender = []
+ue5 = ["python"]
+python = ["dep:pyo3", "dep:pythonize"]
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockall = "0.12"
