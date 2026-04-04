@@ -200,7 +200,21 @@ async fn get_single_tool_version_impl(
 
     // 2. 获取远程最新版本
     let latest_version = match tool {
-        "claude" => fetch_npm_latest_version(&client, "@anthropic-ai/claude-code").await,
+        "claude" => {
+            // 检测本地版本类型
+            let version_type = if let Some(ref version) = local_version {
+                // 获取原始版本来检测类型
+                let raw_output = get_raw_version_output(tool).await.unwrap_or_default();
+                detect_claude_version_type(&raw_output)
+            } else {
+                "js" // 默认使用JS版本
+            };
+
+            match version_type {
+                "rust" => fetch_github_latest_version(&client, "anthropics/claude-code-rust").await,
+                _ => fetch_npm_latest_version(&client, "@anthropic-ai/claude-code").await,
+            }
+        }
         "codex" => fetch_npm_latest_version(&client, "@openai/codex").await,
         "gemini" => fetch_npm_latest_version(&client, "@google/gemini-cli").await,
         "opencode" => fetch_github_latest_version(&client, "anomalyco/opencode").await,
@@ -262,12 +276,52 @@ async fn fetch_github_latest_version(client: &reqwest::Client, repo: &str) -> Op
 static VERSION_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\d+\.\d+\.\d+(-[\w.]+)?").expect("Invalid version regex"));
 
-/// 从版本输出中提取纯版本号
-fn extract_version(raw: &str) -> String {
-    VERSION_RE
-        .find(raw)
-        .map(|m| m.as_str().to_string())
-        .unwrap_or_else(|| raw.to_string())
+/// 获取原始版本输出
+async fn get_raw_version_output(tool: &str) -> Option<String> {
+    use std::process::Command;
+
+    #[cfg(target_os = "windows")]
+    let output = {
+        Command::new("cmd")
+            .args(["/C", &format!("{tool} --version")])
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+    };
+
+    #[cfg(not(target_os = "windows"))]
+    let output = {
+        Command::new("sh")
+            .arg("-c")
+            .arg(format!("{tool} --version"))
+            .output()
+    };
+
+    match output {
+        Ok(out) => {
+            if out.status.success() {
+                let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+                let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
+                let raw = if stdout.is_empty() { &stderr } else { &stdout };
+                if raw.is_empty() {
+                    None
+                } else {
+                    Some(raw.to_string())
+                }
+            } else {
+                None
+            }
+        }
+        Err(_) => None,
+    }
+}
+
+/// 检测Claude版本类型（Rust或JavaScript）
+fn detect_claude_version_type(version_output: &str) -> &'static str {
+    if version_output.contains("claude-code-rs") || version_output.contains("[Rust]") {
+        "rust"
+    } else {
+        "js"
+    }
 }
 
 /// 尝试直接执行命令获取版本
